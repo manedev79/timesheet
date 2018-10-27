@@ -2,6 +2,7 @@ package com.github.manedev79.timesheet.workingday;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class WorkingDayDto {
 
     private Long id;
@@ -24,6 +26,11 @@ public class WorkingDayDto {
     private String description;
 
     private List<BreakDto> breaks;
+
+    public WorkingDay fromDto() {
+        return new WorkingDay(id, day, start, end, description,
+                breaks.stream().map(dto -> dto.fromDto(id)).collect(toList()));
+    }
 
     static WorkingDayDto toDto(final WorkingDay workingDay) {
 

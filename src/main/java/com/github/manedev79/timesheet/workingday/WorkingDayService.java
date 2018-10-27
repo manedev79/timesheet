@@ -26,4 +26,8 @@ public class WorkingDayService {
     public Optional<WorkingDay> getWorkingDay(final LocalDate day) {
         return workingDayRepository.findByDay(day);
     }
+
+    public WorkingDay addWorkingDay(final WorkingDay workingDay) {
+        return workingDayRepository.saveAndFlush(workingDay);
+    }
 }

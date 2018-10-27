@@ -30,6 +30,37 @@
 			"response": []
 		},
 		{
+			"name": "http://localhost:8080/workingdays/",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"day\": \"2018-01-27\",\n    \"start\": \"2018-01-27T04:35:00Z\",\n    \"end\": \"2018-01-27T21:36:00Z\",\n    \"description\": \"Joc's last day\",\n    \"breaks\": [\n    \t{\n            \"start\": null,\n            \"end\": null,\n            \"duration\": \"PT29M\"\n        },\n        {\n            \"start\": \"2018-01-27T12:25:00Z\",\n            \"end\": \"2018-01-27T12:53:00Z\",\n            \"duration\": \"PT28M\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/workingdays/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"workingdays",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "http://localhost:8080/workingdays/1",
 			"request": {
 				"method": "GET",
