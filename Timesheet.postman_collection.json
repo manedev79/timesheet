@@ -30,8 +30,6 @@
 			"response": []
 		},
 		{
-<<<<<<< HEAD
-=======
 			"name": "http://localhost:8080/workingdays/",
 			"request": {
 				"method": "POST",
@@ -63,7 +61,6 @@
 			"response": []
 		},
 		{
->>>>>>> Persist new Workdays
 			"name": "http://localhost:8080/workingdays/1",
 			"request": {
 				"method": "GET",
