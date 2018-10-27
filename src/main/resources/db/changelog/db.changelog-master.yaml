@@ -1,4 +1,3 @@
 databaseChangeLog:
-- changeset:
-  id: 1
-  author: joc
+- includeAll:
+    path: db/changelog/changesets

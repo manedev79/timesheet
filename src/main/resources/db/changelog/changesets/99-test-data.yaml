@@ -1,0 +1,27 @@
+databaseChangeLog:
+- changeSet:
+    id: 2
+    author: joc
+    context: dev
+    changes:
+    - sql:
+        sql: insert into working_day (id, day, start, end, description)
+          values (1, '2012-06-01', {ts '2012-06-01 8:00:00.00Z'}, {ts '2012-06-01 17:34:00Z'}, 'Joc''s first day')
+    - sql:
+        sql: insert into working_day (id, day, start, end, description)
+          values (2, '2012-09-01', {ts '2012-09-01 8:00:00Z'}, {ts '2012-09-01 17:02:00Z'}, 'Jan''s first day')
+    - sql:
+        sql: insert into working_day (id, day, start, end, description)
+          values (3, '2014-04-01', {ts '2012-04-01 7:58:00Z'}, {ts '2012-04-01 14:21:00Z'}, 'Matze''s first day')
+    - sql:
+        sql: insert into break (id, start, end, duration, working_day_id)
+          values (1, {ts '2012-06-01 11:00:00.00Z'}, {ts '2012-06-01 12:02:00Z'}, 3720000, 1)
+    - sql:
+        sql: insert into break (id, start, end, duration, working_day_id)
+          values (2, null, null, 420000, 1)
+    - sql:
+        sql: insert into break (id, start, end, duration, working_day_id)
+          values (3, {ts '2012-09-01 10:47:00.00Z'}, null, 3000000, 2)
+    - sql:
+        sql: insert into break (id, start, end, duration, working_day_id)
+          values (4, {ts '2014-04-01 11:23:00.00Z'}, {ts '2014-04-01 11:56:00Z'}, null, 3)
