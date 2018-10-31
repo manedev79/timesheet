@@ -1,5 +1,6 @@
 package com.github.manedev79.timesheet.workingday;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ public class TimesheetController {
         this.workingDayService = workingDayService;
     }
 
+    @Transactional
     @GetMapping(params = "date")
     public List<WorkingDayDto> getTimesheetForMonthByDate(@RequestParam("date") final LocalDate date) {
         LocalDate start = date.withDayOfMonth(1);
@@ -31,6 +33,7 @@ public class TimesheetController {
                 .collect(toList());
     }
 
+    @Transactional
     @GetMapping(params = "yearMonth")
     public List<WorkingDayDto> getTimesheetForYearMonth(@RequestParam("yearMonth") final YearMonth yearMonth) {
         LocalDate start = yearMonth.atDay(1);
