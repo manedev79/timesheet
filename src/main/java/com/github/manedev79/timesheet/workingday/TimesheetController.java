@@ -24,23 +24,23 @@ public class TimesheetController {
 
     @Transactional
     @GetMapping(params = "date")
-    public List<WorkingDayDto> getTimesheetForMonthByDate(@RequestParam("date") final LocalDate date) {
+    public List<WorkingDaySummaryDto> getTimesheetForMonthByDate(@RequestParam("date") final LocalDate date) {
         LocalDate start = date.withDayOfMonth(1);
         LocalDate end = date.withDayOfMonth(date.lengthOfMonth());
 
         return workingDayService.getWorkingDaysBetween(start, end).stream()
-                .map(WorkingDayDto::toDto)
+                .map(WorkingDaySummaryDto::toDto)
                 .collect(toList());
     }
 
     @Transactional
     @GetMapping(params = "yearMonth")
-    public List<WorkingDayDto> getTimesheetForYearMonth(@RequestParam("yearMonth") final YearMonth yearMonth) {
+    public List<WorkingDaySummaryDto> getTimesheetForYearMonth(@RequestParam("yearMonth") final YearMonth yearMonth) {
         LocalDate start = yearMonth.atDay(1);
         LocalDate end = yearMonth.atEndOfMonth();
 
         return workingDayService.getWorkingDaysBetween(start, end).stream()
-                .map(WorkingDayDto::toDto)
+                .map(WorkingDaySummaryDto::toDto)
                 .collect(toList());
     }
 

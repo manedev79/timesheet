@@ -1,8 +1,5 @@
-package com.github.manedev79.timesheet;
+package com.github.manedev79.timesheet.workingday;
 
-import com.github.manedev79.timesheet.workingday.TimesheetController;
-import com.github.manedev79.timesheet.workingday.WorkingDayController;
-import com.github.manedev79.timesheet.workingday.WorkingDayDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +46,7 @@ public class TimesheetApplicationTests {
         WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
 
         assertThat(timesheetController.getTimesheetForYearMonth(HACKTOBER))
-                .contains(addedWorkingDay);
+                .contains(summaryFor(addedWorkingDay));
     }
 
     @Test
@@ -57,11 +54,15 @@ public class TimesheetApplicationTests {
         WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
 
         assertThat(timesheetController.getTimesheetForMonthByDate(HACKTOBER_LAST_DAY))
-                .contains(addedWorkingDay);
+                .contains(summaryFor(addedWorkingDay));
     }
 
     private WorkingDayDto createWorkingDay() {
         Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(8));
         return new WorkingDayDto(null, HACKTOBER_LAST_DAY, HACKTOBER_LAST_DAY_MIDNIGHT, end, "Test day", emptyList());
+    }
+
+    private WorkingDaySummaryDto summaryFor(WorkingDayDto workingDay) {
+        return WorkingDaySummaryDto.toDto(workingDay.toEntity());
     }
 }

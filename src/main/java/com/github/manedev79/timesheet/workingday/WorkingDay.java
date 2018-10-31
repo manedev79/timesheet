@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -35,5 +36,16 @@ public class WorkingDay {
 
     List<Break> getBreaks() {
         return unmodifiableList(breaks);
+    }
+
+    Duration getTotalBreaksDuration() {
+        return breaks.stream()
+                .map(Break::getDuration)
+                .reduce(Duration::plus)
+                .orElse(Duration.ZERO);
+    }
+
+    Duration getTotalWorkDuration() {
+        return Duration.between(start, end).minus(getTotalBreaksDuration());
     }
 }
