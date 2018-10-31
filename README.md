@@ -8,6 +8,11 @@ Use Gradle to build and run:
 
 ```gradlew bootRun```
 
+## Setup development environment
+
+Intellij IDEA:  
+You need to install the Lombok plugin.
+
 ## URLs 
 
 - http://localhost:8080/h2-console, JDBC URL: `jdbc:h2:mem:testdb`
