@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -29,5 +30,16 @@ public class TimesheetController {
                 .map(WorkingDayDto::toDto)
                 .collect(toList());
     }
+
+    @GetMapping(params = "yearMonth")
+    public List<WorkingDayDto> getTimesheetForYearMonth(@RequestParam("yearMonth") final YearMonth yearMonth) {
+        LocalDate start = yearMonth.atDay(1);
+        LocalDate end = yearMonth.atEndOfMonth();
+
+        return workingDayService.getWorkingDaysBetween(start, end).stream()
+                .map(WorkingDayDto::toDto)
+                .collect(toList());
+    }
+
 
 }
