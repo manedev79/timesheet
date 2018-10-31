@@ -21,8 +21,6 @@ public class WorkingDay {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String month;
-
     private LocalDate day;
 
     private Instant start;

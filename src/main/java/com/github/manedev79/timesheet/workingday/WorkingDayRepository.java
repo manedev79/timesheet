@@ -12,5 +12,6 @@ public interface WorkingDayRepository extends JpaRepository<WorkingDay, Long> {
 
     Optional<WorkingDay> findByDay(final LocalDate day);
 
-    List<WorkingDay> findByMonth(String month);
+    List<WorkingDay> findByDayBetween(final LocalDate start, final LocalDate end);
+
 }

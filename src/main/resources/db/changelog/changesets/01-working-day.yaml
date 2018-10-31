@@ -14,11 +14,6 @@ databaseChangeLog:
               primaryKey: true
               nullable: false
         - column:
-            name: month
-            type: varchar(7)
-            constraints:
-              nullable: false
-        - column:
             name: day
             type: date
             constraints:

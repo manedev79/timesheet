@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -19,10 +20,14 @@ public class TimesheetController {
         this.workingDayService = workingDayService;
     }
 
-    @GetMapping(params = "yearMonth")
-    public List<WorkingDayDto> getTimesheetForMonth(@RequestParam("yearMonth") final String yearMonth) {
-        return workingDayService.getWorkingDaysForMonth(yearMonth).stream()
+    @GetMapping(params = "date")
+    public List<WorkingDayDto> getTimesheetForMonthByDate(@RequestParam("date") final LocalDate date) {
+        LocalDate start = date.withDayOfMonth(1);
+        LocalDate end = date.withDayOfMonth(date.lengthOfMonth());
+
+        return workingDayService.getWorkingDaysBetween(start, end).stream()
                 .map(WorkingDayDto::toDto)
                 .collect(toList());
     }
+
 }
