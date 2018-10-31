@@ -2,6 +2,12 @@
 
 Track working hours, flex time and vacations.
 
+## How to build
+
+Use Gradle to build and run:  
+
+```gradlew bootRun```
+
 ## URLs 
 
 - http://localhost:8080/h2-console, JDBC URL: `jdbc:h2:mem:testdb`
