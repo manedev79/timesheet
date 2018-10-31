@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -27,9 +28,13 @@ public class WorkingDayDto {
 
     private List<BreakDto> breaks;
 
-    public WorkingDay fromDto() {
-        return new WorkingDay(id, day, start, end, description,
+    public WorkingDay toEntity() {
+        return new WorkingDay(id, monthAsString(), day, start, end, description,
                 breaks.stream().map(dto -> dto.fromDto(id)).collect(toList()));
+    }
+
+    private String monthAsString() {
+        return YearMonth.of(day.getYear(), day.getMonthValue()).toString();
     }
 
     static WorkingDayDto toDto(final WorkingDay workingDay) {

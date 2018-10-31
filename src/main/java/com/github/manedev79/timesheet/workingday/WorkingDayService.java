@@ -30,4 +30,9 @@ public class WorkingDayService {
     public WorkingDay addWorkingDay(final WorkingDay workingDay) {
         return workingDayRepository.saveAndFlush(workingDay);
     }
+
+    public List<WorkingDay> getWorkingDaysForMonth(String month) {
+        return workingDayRepository.findByMonth(month);
+    }
+
 }
