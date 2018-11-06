@@ -5,6 +5,7 @@
       <profile default="true" name="Default" enabled="true" />
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="timesheet_integrationTest" target="1.8" />
       <module name="timesheet_main" target="1.8" />
       <module name="timesheet_test" target="1.8" />
     </bytecodeTargetLevel>
