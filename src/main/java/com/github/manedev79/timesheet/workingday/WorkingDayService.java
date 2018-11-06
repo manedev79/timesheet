@@ -31,8 +31,7 @@ public class WorkingDayService {
         return workingDayRepository.saveAndFlush(workingDay);
     }
 
-    public List<WorkingDay> getWorkingDaysForMonth(String month) {
-        return workingDayRepository.findByMonth(month);
+    public List<WorkingDay> getWorkingDaysBetween(LocalDate start, LocalDate end) {
+        return workingDayRepository.findByDayBetween(start, end);
     }
-
 }

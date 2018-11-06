@@ -29,12 +29,8 @@ public class WorkingDayDto {
     private List<BreakDto> breaks;
 
     public WorkingDay toEntity() {
-        return new WorkingDay(id, monthAsString(), day, start, end, description,
+        return new WorkingDay(id, day, start, end, description,
                 breaks.stream().map(dto -> dto.fromDto(id)).collect(toList()));
-    }
-
-    private String monthAsString() {
-        return YearMonth.of(day.getYear(), day.getMonthValue()).toString();
     }
 
     static WorkingDayDto toDto(final WorkingDay workingDay) {
