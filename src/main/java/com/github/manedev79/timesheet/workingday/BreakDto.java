@@ -22,6 +22,9 @@ public class BreakDto {
     }
 
     public Break fromDto(final Long workingDayId) {
+        if (start != null && end != null) {
+            return new Break(id, start, end, Duration.between(start, end), workingDayId);
+        }
         return new Break(id, start, end, duration, workingDayId);
     }
 }
