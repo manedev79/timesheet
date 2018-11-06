@@ -1,15 +1,7 @@
 package com.github.manedev79.timesheet.workingday;
 
 import com.github.manedev79.timesheet.restutil.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -67,7 +59,7 @@ public class WorkingDayController {
     @PostMapping
     @ResponseStatus(CREATED)
     public WorkingDayDto addWorkingDay(@RequestBody final WorkingDayDto workingDayDto) {
-        return WorkingDayDto.toDto(workingDayService.addWorkingDay(workingDayDto.fromDto()));
+        return WorkingDayDto.toDto(workingDayService.addWorkingDay(workingDayDto.toEntity()));
     }
 
     private WorkingDay getOneWorkingDay(final Long id) {
