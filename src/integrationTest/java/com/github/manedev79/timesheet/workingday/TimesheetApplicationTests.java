@@ -57,6 +57,17 @@ public class TimesheetApplicationTests {
                 .contains(summaryFor(addedWorkingDay));
     }
 
+    @Test
+    public void updateWorkingDay() {
+        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
+        addedWorkingDay.setStart(HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(1)));
+
+        workingDayController.updateWorkingDay(addedWorkingDay);
+
+        WorkingDayDto persistedWorkingDay = workingDayController.getWorkingDay(addedWorkingDay.getId());
+        assertThat(persistedWorkingDay).isEqualTo(addedWorkingDay);
+    }
+
     private WorkingDayDto createWorkingDay() {
         Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(8));
         return new WorkingDayDto(null, HACKTOBER_LAST_DAY, HACKTOBER_LAST_DAY_MIDNIGHT, end, "Test day", emptyList());
