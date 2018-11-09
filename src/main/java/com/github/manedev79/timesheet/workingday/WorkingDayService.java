@@ -34,4 +34,8 @@ public class WorkingDayService {
     public List<WorkingDay> getWorkingDaysBetween(LocalDate start, LocalDate end) {
         return workingDayRepository.findByDayBetween(start, end);
     }
+
+    public void updateWorkingDay(WorkingDay workingDay) {
+        workingDayRepository.saveAndFlush(workingDay);
+    }
 }
