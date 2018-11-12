@@ -1,5 +1,6 @@
-package com.github.manedev79.timesheet.workingday;
+package com.github.manedev79.timesheet.application;
 
+import com.github.manedev79.timesheet.domain.WorkingDay;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

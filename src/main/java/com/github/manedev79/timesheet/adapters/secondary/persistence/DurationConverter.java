@@ -1,4 +1,4 @@
-package com.github.manedev79.timesheet.jpautil;
+package com.github.manedev79.timesheet.adapters.secondary.persistence;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

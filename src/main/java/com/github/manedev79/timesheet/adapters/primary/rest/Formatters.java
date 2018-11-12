@@ -1,4 +1,4 @@
-package com.github.manedev79.timesheet.restutil;
+package com.github.manedev79.timesheet.adapters.primary.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

@@ -1,5 +1,6 @@
-package com.github.manedev79.timesheet.workingday;
+package com.github.manedev79.timesheet.domain;
 
+import com.github.manedev79.timesheet.domain.WorkingDay;
 import org.junit.Test;
 
 import java.time.Duration;

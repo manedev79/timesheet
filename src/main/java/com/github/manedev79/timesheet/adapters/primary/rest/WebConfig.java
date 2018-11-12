@@ -1,4 +1,4 @@
-package com.github.manedev79.timesheet.restutil;
+package com.github.manedev79.timesheet.adapters.primary.rest;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

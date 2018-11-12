@@ -1,4 +1,4 @@
-package com.github.manedev79.timesheet.workingday;
+package com.github.manedev79.timesheet.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
