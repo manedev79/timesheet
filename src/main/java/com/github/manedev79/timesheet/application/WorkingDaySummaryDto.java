@@ -35,4 +35,8 @@ public class WorkingDaySummaryDto {
                 workingDay.getTotalBreaksDuration(),
                 workingDay.getDescription());
     }
+
+    static WorkingDaySummaryDto emptyWorkingDay(LocalDate day) {
+        return new WorkingDaySummaryDto(null, day, null, null, null, null, null);
+    }
 }
