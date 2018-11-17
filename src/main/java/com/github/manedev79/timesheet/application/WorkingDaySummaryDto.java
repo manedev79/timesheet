@@ -1,5 +1,6 @@
-package com.github.manedev79.timesheet.workingday;
+package com.github.manedev79.timesheet.application;
 
+import com.github.manedev79.timesheet.domain.WorkingDay;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,7 @@ public class WorkingDaySummaryDto {
 
     private String description;
 
-    static WorkingDaySummaryDto toDto(final WorkingDay workingDay) {
+    public static WorkingDaySummaryDto toDto(final WorkingDay workingDay) {
         return new WorkingDaySummaryDto(workingDay.getId(), workingDay.getDay(),
                 workingDay.getStart(), workingDay.getEnd(),
                 workingDay.getTotalWorkDuration(),

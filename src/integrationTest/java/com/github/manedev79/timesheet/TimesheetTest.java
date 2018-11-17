@@ -1,5 +1,12 @@
-package com.github.manedev79.timesheet.workingday;
+package com.github.manedev79.timesheet;
 
+import com.github.manedev79.timesheet.adapters.primary.rest.TimesheetController;
+import com.github.manedev79.timesheet.adapters.primary.rest.WorkingDayController;
+import com.github.manedev79.timesheet.application.BreakDto;
+import com.github.manedev79.timesheet.application.WorkingDayDto;
+import com.github.manedev79.timesheet.application.WorkingDaySummaryDto;
+import com.github.manedev79.timesheet.utils.TestUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,26 +14,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.YearMonth;
 
+import static com.github.manedev79.timesheet.utils.TestUtils.createWorkingDay;
 import static java.time.temporal.ChronoUnit.MINUTES;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class TimesheetApplicationTests {
-
+public class TimesheetTest {
     private static final YearMonth HACKTOBER = YearMonth.of(2018, 10);
-    private static final LocalDate HACKTOBER_LAST_DAY = LocalDate.of(HACKTOBER.getYear(), HACKTOBER.getMonth(), 31);
-    private static final Instant HACKTOBER_LAST_DAY_MIDNIGHT = Instant.ofEpochSecond(HACKTOBER_LAST_DAY.toEpochDay() * 24 * 60 * 60);
-
     @Autowired
     private WorkingDayController workingDayController;
-
     @Autowired
     private TimesheetController timesheetController;
 
@@ -44,25 +44,9 @@ public class TimesheetApplicationTests {
     }
 
     @Test
-    public void roundtripForWorkingDay() {
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
-
-        assertThat(timesheetController.getTimesheetForYearMonth(HACKTOBER))
-                .contains(summaryFor(addedWorkingDay));
-    }
-
-    @Test
-    public void roundTripWithDate() {
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
-
-        assertThat(timesheetController.getTimesheetForMonthByDate(HACKTOBER_LAST_DAY))
-                .contains(summaryFor(addedWorkingDay));
-    }
-
-    @Test
     public void updateWorkingDay() {
         WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
-        addedWorkingDay.setStart(HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(1)));
+        addedWorkingDay.setStart(TestUtils.HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(1)));
 
         workingDayController.updateWorkingDay(addedWorkingDay);
 
@@ -72,7 +56,7 @@ public class TimesheetApplicationTests {
 
     @Test
     public void ensureBreaksGetUpdated() {
-        Long workingDayId = workingDayController.addWorkingDay(createWorkingDayWithBreak()).getId();
+        Long workingDayId = workingDayController.addWorkingDay(TestUtils.createWorkingDayWithBreak()).getId();
         WorkingDayDto persistedWorkingDay = workingDayController.getWorkingDay(workingDayId);
         BreakDto persistedBreak = persistedWorkingDay.getBreaks().get(0);
 
@@ -89,29 +73,27 @@ public class TimesheetApplicationTests {
     public void ensureNewBreaksArePersistedDuringUpdate() {
         WorkingDayDto workingDay = workingDayController.addWorkingDay(createWorkingDay());
 
-        BreakDto aBreak = createBreak();
+        BreakDto aBreak = TestUtils.createBreak();
         workingDay.setBreaks(singletonList(aBreak));
         workingDayController.updateWorkingDay(workingDay);
 
-        assertThat(workingDay.getBreaks().get(0)).isEqualToIgnoringGivenFields(aBreak,"id");
+        assertThat(workingDay.getBreaks().get(0)).isEqualToIgnoringGivenFields(aBreak, "id");
     }
 
-    private WorkingDayDto createWorkingDayWithBreak() {
-        BreakDto newBreak = createBreak();
-        WorkingDayDto workingDay = createWorkingDay();
-        workingDay.setBreaks(singletonList(newBreak));
-        return workingDay;
+    @Test
+    public void roundtripForWorkingDay() {
+        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
+
+        Assertions.assertThat(timesheetController.getTimesheetForYearMonth(HACKTOBER))
+                .contains(summaryFor(addedWorkingDay));
     }
 
-    private BreakDto createBreak() {
-        Instant breakStart = HACKTOBER_LAST_DAY_MIDNIGHT.plus(11 * 60 + 30, MINUTES);
-        Instant breakEnd = HACKTOBER_LAST_DAY_MIDNIGHT.plus(12 * 60 + 15, MINUTES);
-        return new BreakDto(null, breakStart, breakEnd, null);
-    }
+    @Test
+    public void roundTripWithDate() {
+        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
 
-    private WorkingDayDto createWorkingDay() {
-        Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(8));
-        return new WorkingDayDto(null, HACKTOBER_LAST_DAY, HACKTOBER_LAST_DAY_MIDNIGHT, end, "Test day", emptyList());
+        Assertions.assertThat(timesheetController.getTimesheetForMonthByDate(TestUtils.HACKTOBER_LAST_DAY))
+                .contains(summaryFor(addedWorkingDay));
     }
 
     private WorkingDaySummaryDto summaryFor(WorkingDayDto workingDay) {

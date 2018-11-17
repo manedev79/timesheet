@@ -1,5 +1,6 @@
-package com.github.manedev79.timesheet.workingday;
+package com.github.manedev79.timesheet.application;
 
+import com.github.manedev79.timesheet.domain.Break;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,11 +18,11 @@ public class BreakDto {
     private Instant end;
     private Duration duration;
 
-    public static BreakDto toDto(final Break aBreak) {
+    static BreakDto toDto(final Break aBreak) {
         return new BreakDto(aBreak.getId(), aBreak.getStart(), aBreak.getEnd(), aBreak.getDuration());
     }
 
-    public Break fromDto(final Long workingDayId) {
+    Break fromDto(final Long workingDayId) {
         if (start != null && end != null) {
             return new Break(id, start, end, Duration.between(start, end), workingDayId);
         }

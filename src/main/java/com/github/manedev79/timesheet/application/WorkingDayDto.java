@@ -1,5 +1,6 @@
-package com.github.manedev79.timesheet.workingday;
+package com.github.manedev79.timesheet.application;
 
+import com.github.manedev79.timesheet.domain.WorkingDay;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,7 @@ public class WorkingDayDto {
                 breaks.stream().map(dto -> dto.fromDto(id)).collect(toList()));
     }
 
-    static WorkingDayDto toDto(final WorkingDay workingDay) {
+    public static WorkingDayDto toDto(final WorkingDay workingDay) {
 
         final List<BreakDto> breakDtos = workingDay.getBreaks().stream()
                 .map(BreakDto::toDto)
