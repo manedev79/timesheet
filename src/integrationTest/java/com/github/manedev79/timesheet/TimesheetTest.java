@@ -2,6 +2,9 @@ package com.github.manedev79.timesheet;
 
 import com.github.manedev79.timesheet.adapters.primary.rest.TimesheetController;
 import com.github.manedev79.timesheet.adapters.primary.rest.WorkingDayController;
+import com.github.manedev79.timesheet.application.BreakDto;
+import com.github.manedev79.timesheet.application.WorkingDayDto;
+import com.github.manedev79.timesheet.application.WorkingDaySummaryDto;
 import com.github.manedev79.timesheet.utils.TestUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -13,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.Duration;
 import java.time.YearMonth;
 
-import static java.time.Month.OCTOBER;
+import static com.github.manedev79.timesheet.utils.TestUtils.createWorkingDay;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +36,7 @@ public class TimesheetTest {
 
     @Test
     public void addWorkingDay() {
-        WorkingDayDto workingDay = TestUtils.createWorkingDay();
+        WorkingDayDto workingDay = createWorkingDay();
 
         WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(workingDay);
 
@@ -42,7 +45,7 @@ public class TimesheetTest {
 
     @Test
     public void updateWorkingDay() {
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(TestUtils.createWorkingDay());
+        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
         addedWorkingDay.setStart(TestUtils.HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(1)));
 
         workingDayController.updateWorkingDay(addedWorkingDay);
@@ -68,7 +71,7 @@ public class TimesheetTest {
 
     @Test
     public void ensureNewBreaksArePersistedDuringUpdate() {
-        WorkingDayDto workingDay = workingDayController.addWorkingDay(TestUtils.createWorkingDay());
+        WorkingDayDto workingDay = workingDayController.addWorkingDay(createWorkingDay());
 
         BreakDto aBreak = TestUtils.createBreak();
         workingDay.setBreaks(singletonList(aBreak));
@@ -79,7 +82,7 @@ public class TimesheetTest {
 
     @Test
     public void roundtripForWorkingDay() {
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(TestUtils.createWorkingDay());
+        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
 
         Assertions.assertThat(timesheetController.getTimesheetForYearMonth(HACKTOBER))
                 .contains(summaryFor(addedWorkingDay));
@@ -87,15 +90,10 @@ public class TimesheetTest {
 
     @Test
     public void roundTripWithDate() {
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(TestUtils.createWorkingDay());
+        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
 
         Assertions.assertThat(timesheetController.getTimesheetForMonthByDate(TestUtils.HACKTOBER_LAST_DAY))
                 .contains(summaryFor(addedWorkingDay));
-    }
-
-    @Test
-    public void containsAllDaysOfMonth() {
-        Assertions.assertThat(timesheetController.getTimesheetForYearMonth(YearMonth.of(2018, OCTOBER))).hasSize(31);
     }
 
     private WorkingDaySummaryDto summaryFor(WorkingDayDto workingDay) {

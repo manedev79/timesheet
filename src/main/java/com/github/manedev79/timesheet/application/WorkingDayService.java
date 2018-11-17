@@ -1,6 +1,5 @@
 package com.github.manedev79.timesheet.application;
 
-import com.github.manedev79.timesheet.domain.WorkingDay;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,7 +1,7 @@
 package com.github.manedev79.timesheet.utils;
 
-import com.github.manedev79.timesheet.BreakDto;
-import com.github.manedev79.timesheet.WorkingDayDto;
+import com.github.manedev79.timesheet.application.BreakDto;
+import com.github.manedev79.timesheet.application.WorkingDayDto;
 
 import java.time.Duration;
 import java.time.Instant;
