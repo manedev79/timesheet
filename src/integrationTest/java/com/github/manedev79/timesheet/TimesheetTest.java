@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.YearMonth;
 
 import static com.github.manedev79.timesheet.utils.TestUtils.createWorkingDay;
+import static java.time.Month.OCTOBER;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,6 +95,11 @@ public class TimesheetTest {
 
         Assertions.assertThat(timesheetController.getTimesheetForMonthByDate(TestUtils.HACKTOBER_LAST_DAY))
                 .contains(summaryFor(addedWorkingDay));
+    }
+
+    @Test
+    public void containsAllDaysOfMonth() {
+        assertThat(timesheetController.getTimesheetForYearMonth(YearMonth.of(2018, OCTOBER))).hasSize(31);
     }
 
     private WorkingDaySummaryDto summaryFor(WorkingDayDto workingDay) {
