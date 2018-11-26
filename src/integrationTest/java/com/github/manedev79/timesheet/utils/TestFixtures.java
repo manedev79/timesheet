@@ -12,7 +12,7 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
-public class TestUtils {
+public class TestFixtures {
     private static final YearMonth HACKTOBER = YearMonth.of(2018, 10);
     public static final LocalDate HACKTOBER_LAST_DAY = LocalDate.of(HACKTOBER.getYear(), HACKTOBER.getMonth(), 31);
     public static final Instant HACKTOBER_LAST_DAY_MIDNIGHT = Instant.ofEpochSecond(HACKTOBER_LAST_DAY.toEpochDay() * 24 * 60 * 60);
@@ -32,6 +32,11 @@ public class TestUtils {
 
     public static WorkingDayDto createWorkingDay() {
         Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(8));
+        return new WorkingDayDto(null, HACKTOBER_LAST_DAY, HACKTOBER_LAST_DAY_MIDNIGHT, end, "Test day", emptyList());
+    }
+
+    public static WorkingDayDto createLongWorkingDay() {
+        Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(9));
         return new WorkingDayDto(null, HACKTOBER_LAST_DAY, HACKTOBER_LAST_DAY_MIDNIGHT, end, "Test day", emptyList());
     }
 }

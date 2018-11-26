@@ -1,5 +1,6 @@
 package com.github.manedev79.timesheet.application;
 
+import com.github.manedev79.timesheet.domain.FlexTimeDomainService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,9 +13,11 @@ import java.util.function.Consumer;
 @Transactional
 public class TimesheetService {
     private final WorkingDayRepository workingDayRepository;
+    private final FlexTimeDomainService flexTimeDomainService;
 
-    public TimesheetService(WorkingDayRepository workingDayRepository) {
+    public TimesheetService(WorkingDayRepository workingDayRepository, FlexTimeDomainService flexTimeDomainService) {
         this.workingDayRepository = workingDayRepository;
+        this.flexTimeDomainService = flexTimeDomainService;
     }
 
     public List<WorkingDaySummaryDto> getWorkingDaysBetween(final LocalDate start, final LocalDate end) {
@@ -23,6 +26,7 @@ public class TimesheetService {
         workingDayRepository.findByDayBetween(start, end).stream()
                 .map(WorkingDaySummaryDto::toDto)
                 .forEach(replaceEmptyWorkingDay(allWorkingDays));
+        allWorkingDays.forEach(flexTimeDomainService::flexTimeForeDay);
 
         return allWorkingDays;
     }
