@@ -43,4 +43,8 @@ public class WorkingDayService {
     public void updateWorkingDay(WorkingDayDto workingDay) {
         workingDayRepository.saveAndFlush(workingDay.toEntity());
     }
+
+    public void deleteAllWorkingDays() {
+        workingDayRepository.deleteAll();
+    }
 }

@@ -1,12 +1,10 @@
 package com.github.manedev79.timesheet.adapters.primary.rest;
 
-import com.github.manedev79.timesheet.application.BreakDto;
 import com.github.manedev79.timesheet.application.WorkingDayDto;
 import com.github.manedev79.timesheet.application.WorkingDayService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -21,28 +19,9 @@ public class WorkingDayController {
         this.workingDayService = workingDayService;
     }
 
-    @GetMapping
-    public List<WorkingDayDto> getAllWorkingDays() {
-        return workingDayService.getAllWorkingDays();
-    }
-
     @GetMapping(path = "/{id}")
     public WorkingDayDto getWorkingDay(@PathVariable("id") final Long id) {
         return getOneWorkingDay(id);
-    }
-
-    @GetMapping(path = "/{id}/breaks")
-    public List<BreakDto> getAllBreaksForWorkingDay(@PathVariable("id") final Long id) {
-        return getOneWorkingDay(id).getBreaks();
-    }
-
-    @GetMapping(path = "/{workingDayId}/breaks/{breakId}")
-    public BreakDto getBreakForWorkingDay(@PathVariable("workingDayId") final Long workingDayId,
-                                          @PathVariable("breakId") final Long breakId) {
-        return getOneWorkingDay(workingDayId)
-                .getBreaks().stream()
-                .filter(aBreak -> breakId.equals(aBreak.getId()))
-                .findFirst().orElseThrow(ResourceNotFoundException::new);
     }
 
     @GetMapping(params = "day")
@@ -64,5 +43,10 @@ public class WorkingDayController {
 
     private WorkingDayDto getOneWorkingDay(final Long id) {
         return workingDayService.getWorkingDay(id).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @DeleteMapping
+    public void deleteAllWorkingDays() {
+        workingDayService.deleteAllWorkingDays();
     }
 }

@@ -5,8 +5,8 @@ import com.github.manedev79.timesheet.adapters.primary.rest.WorkingDayController
 import com.github.manedev79.timesheet.application.BreakDto;
 import com.github.manedev79.timesheet.application.WorkingDayDto;
 import com.github.manedev79.timesheet.application.WorkingDaySummaryDto;
-import com.github.manedev79.timesheet.domain.FlexTimeDomainService;
 import com.github.manedev79.timesheet.utils.TestFixtures;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,7 @@ import java.time.Duration;
 import java.time.YearMonth;
 import java.util.List;
 
-import static com.github.manedev79.timesheet.utils.TestFixtures.createLongWorkingDay;
-import static com.github.manedev79.timesheet.utils.TestFixtures.createWorkingDay;
+import static com.github.manedev79.timesheet.utils.TestFixtures.*;
 import static java.time.Month.OCTOBER;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Collections.singletonList;
@@ -33,6 +32,11 @@ public class TimesheetTest {
     @Autowired
     private TimesheetController timesheetController;
 
+    @Before
+    public void setUp() {
+        workingDayController.deleteAllWorkingDays();
+    }
+
     @Test
     public void contextLoads() {
     }
@@ -44,6 +48,14 @@ public class TimesheetTest {
         WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(workingDay);
 
         assertThat(addedWorkingDay).isEqualToIgnoringGivenFields(workingDay, "id");
+    }
+
+    @Test
+    public void getWorkingDayByDate() {
+        WorkingDayDto workingDay = createWorkingDay();
+        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(workingDay);
+
+        assertThat(workingDayController.getWorkingDay(HACKTOBER_LAST_DAY)).isEqualTo(addedWorkingDay);
     }
 
     @Test
@@ -95,7 +107,7 @@ public class TimesheetTest {
     public void roundTripWithDate() {
         WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
 
-        assertThat(timesheetController.getTimesheetForMonthByDate(TestFixtures.HACKTOBER_LAST_DAY))
+        assertThat(timesheetController.getTimesheetForMonthByDate(HACKTOBER_LAST_DAY))
                 .contains(summaryFor(addedWorkingDay));
     }
 

@@ -18,6 +18,13 @@ You need to install the Lombok plugin.
 - http://localhost:8080/h2-console, JDBC URL: `jdbc:h2:mem:testdb`
 - http://localhost:8080/swagger-ui.html 
 
+## Test
+
+The project contains separate source sets for unit tests and integration tests.
+
+To run all tests:
+
+```gradlew test integrationTest```
 
 ## Used links
 
