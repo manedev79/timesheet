@@ -14,7 +14,7 @@ public class FlexTimeDomainService {
     public void flexTimeForeDay(WorkingDaySummaryDto workingDay) {
         Duration totalWork = workingDay.getTotalWork();
         if (totalWork != null) {
-            workingDay.setFlexTime(totalWork.minus(configuration.getDailyWorkingHours()));
+            workingDay.setFlexTime(totalWork.minus(configuration.getDailyHours()));
         }
     }
 }

@@ -26,6 +26,12 @@ To run all tests:
 
 ```gradlew test integrationTest```
 
+## Configuration
+
+The following properties can be configured using SpringBoot mechanisms, see https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config
+
+* dailyHours (Duration)
+
 ## Used links
 
 - https://start.spring.io/
