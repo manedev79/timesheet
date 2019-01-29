@@ -47,6 +47,15 @@ public class WorkingDay {
     }
 
     public Duration getTotalWorkDuration() {
-        return Duration.between(start, end).minus(getTotalBreaksDuration());
+        if (isWorkDone()) {
+            return Duration.between(start, end).minus(getTotalBreaksDuration());
+        }
+        else {
+            return Duration.ZERO;
+        }
+    }
+
+    private boolean isWorkDone() {
+        return start != null && end != null;
     }
 }
