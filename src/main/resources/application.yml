@@ -5,3 +5,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+
+timesheet:
+  daily-working-hours: 8h
+
