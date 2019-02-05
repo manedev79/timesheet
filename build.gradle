@@ -57,7 +57,7 @@ task unpack(type: Copy) {
 }
 
 docker {
-  name "${project.group}/${bootJar.baseName}"
+  name 'manedev79/timesheet'
   copySpec.from(tasks.unpack.outputs).into("dependency")
   buildArgs(['DEPENDENCY': "dependency"])
 }
