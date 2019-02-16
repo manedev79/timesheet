@@ -10,7 +10,6 @@ import java.time.Duration;
 
 @Component
 @ConfigurationProperties("timesheet")
-
 @Setter
 @Getter
 public class TimesheetConfiguration implements WorkingHoursConfiguration {
