@@ -1,41 +1,36 @@
 package com.github.manedev79.timesheet.adapters.primary.rest;
 
+import com.github.manedev79.timesheet.application.TimesheetDto;
 import com.github.manedev79.timesheet.application.TimesheetService;
-import com.github.manedev79.timesheet.application.WorkingDaySummaryDto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.github.manedev79.timesheet.application.WorkingDayDto;
+import com.github.manedev79.timesheet.domain.Timesheet;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("monthlytimesheets")
+@RequestMapping("timesheet")
 public class TimesheetController {
 
-    private TimesheetService timesheetService;
+    private final TimesheetService timesheetService;
 
-    public TimesheetController(TimesheetService timesheetService) {
-        this.timesheetService = timesheetService;
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Timesheet createTimesheet(YearMonth yearMonth) {
+        return timesheetService.createTimesheetForMonth(yearMonth);
     }
 
-    @GetMapping(params = "date")
-    public List<WorkingDaySummaryDto> getTimesheetForMonthByDate(@RequestParam("date") final LocalDate date) {
-        LocalDate start = date.withDayOfMonth(1);
-        LocalDate end = date.withDayOfMonth(date.lengthOfMonth());
-
-        return timesheetService.getWorkingDaysBetween(start, end);
+    @PostMapping(path = "{month}/workingDay/{monthDay}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void updateWorkingDay(WorkingDayDto workingDay) {
+        timesheetService.updateWorkingDay(workingDay);
     }
 
-    @GetMapping(params = "yearMonth")
-    public List<WorkingDaySummaryDto> getTimesheetForYearMonth(@RequestParam("yearMonth") final YearMonth yearMonth) {
-        LocalDate start = yearMonth.atDay(1);
-        LocalDate end = yearMonth.atEndOfMonth();
-
-        return timesheetService.getWorkingDaysBetween(start, end);
+    @GetMapping(path = "{month}")
+    public TimesheetDto getTimesheet(@RequestParam YearMonth month) {
+        return timesheetService.getTimesheetForMonth(month);
     }
-
-
 }

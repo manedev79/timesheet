@@ -1,21 +1,20 @@
-package com.github.manedev79.timesheet.utils;
+package com.github.manedev79.timesheet.fixtures;
 
 import com.github.manedev79.timesheet.application.BreakDto;
 import com.github.manedev79.timesheet.application.WorkingDayDto;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.YearMonth;
+import java.time.*;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class TestFixtures {
-    private static final YearMonth HACKTOBER = YearMonth.of(2018, 10);
-    public static final LocalDate HACKTOBER_LAST_DAY = LocalDate.of(HACKTOBER.getYear(), HACKTOBER.getMonth(), 31);
-    public static final Instant HACKTOBER_LAST_DAY_MIDNIGHT = Instant.ofEpochSecond(HACKTOBER_LAST_DAY.toEpochDay() * 24 * 60 * 60);
+    public static final YearMonth HACKTOBER = YearMonth.of(2018, 10);
+    public static final LocalDate HACKTOBER_LAST_DAY_DATE = LocalDate.of(HACKTOBER.getYear(), HACKTOBER.getMonth(), 31);
+    public static final MonthDay HACKTOBER_LAST_DAY = MonthDay.from(HACKTOBER_LAST_DAY_DATE);
+    public static final Instant HACKTOBER_LAST_DAY_MIDNIGHT = Instant.ofEpochSecond(HACKTOBER_LAST_DAY_DATE.toEpochDay() * 24 * 60 * 60);
+    private static final Duration FLEX_TIME = Duration.ZERO;
 
     public static WorkingDayDto createWorkingDayWithBreak() {
         BreakDto newBreak = createBreak();
@@ -27,16 +26,16 @@ public class TestFixtures {
     public static BreakDto createBreak() {
         Instant breakStart = HACKTOBER_LAST_DAY_MIDNIGHT.plus(11 * 60 + 30, MINUTES);
         Instant breakEnd = HACKTOBER_LAST_DAY_MIDNIGHT.plus(12 * 60 + 15, MINUTES);
-        return new BreakDto(null, breakStart, breakEnd, null);
+        return new BreakDto(breakStart, breakEnd);
     }
 
     public static WorkingDayDto createWorkingDay() {
         Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(8));
-        return new WorkingDayDto(null, HACKTOBER_LAST_DAY, HACKTOBER_LAST_DAY_MIDNIGHT, end, "Test day", emptyList());
+        return new WorkingDayDto(HACKTOBER_LAST_DAY_DATE, HACKTOBER_LAST_DAY_MIDNIGHT, end, FLEX_TIME, "Test day", emptyList());
     }
 
     public static WorkingDayDto createLongWorkingDay() {
         Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(9));
-        return new WorkingDayDto(null, HACKTOBER_LAST_DAY, HACKTOBER_LAST_DAY_MIDNIGHT, end, "Test day", emptyList());
+        return new WorkingDayDto(HACKTOBER_LAST_DAY_DATE, HACKTOBER_LAST_DAY_MIDNIGHT,end , FLEX_TIME, "Test day", emptyList());
     }
 }
