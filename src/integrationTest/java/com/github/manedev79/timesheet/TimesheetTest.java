@@ -1,118 +1,114 @@
 package com.github.manedev79.timesheet;
 
 import com.github.manedev79.timesheet.adapters.primary.rest.TimesheetController;
-import com.github.manedev79.timesheet.adapters.primary.rest.WorkingDayController;
 import com.github.manedev79.timesheet.application.BreakDto;
+import com.github.manedev79.timesheet.application.TimesheetDto;
 import com.github.manedev79.timesheet.application.WorkingDayDto;
-import com.github.manedev79.timesheet.application.WorkingDaySummaryDto;
-import com.github.manedev79.timesheet.domain.FlexTimeDomainService;
-import com.github.manedev79.timesheet.utils.TestFixtures;
+import com.github.manedev79.timesheet.domain.Timesheet;
+import com.github.manedev79.timesheet.fixtures.TestFixtures;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Duration;
-import java.time.YearMonth;
+import java.time.Instant;
+import java.time.MonthDay;
+import java.util.Collections;
 import java.util.List;
 
-import static com.github.manedev79.timesheet.utils.TestFixtures.createLongWorkingDay;
-import static com.github.manedev79.timesheet.utils.TestFixtures.createWorkingDay;
-import static java.time.Month.OCTOBER;
-import static java.time.temporal.ChronoUnit.MINUTES;
-import static java.util.Collections.singletonList;
+import static com.github.manedev79.timesheet.fixtures.TestFixtures.*;
+import static java.time.temporal.ChronoUnit.HOURS;
+import static junit.framework.TestCase.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TimesheetTest {
-    private static final YearMonth HACKTOBER = YearMonth.of(2018, 10);
-    @Autowired
-    private WorkingDayController workingDayController;
+
     @Autowired
     private TimesheetController timesheetController;
 
-    @Test
-    public void contextLoads() {
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Before
+    public void setup() {
+        mongoTemplate.dropCollection(Timesheet.class);
     }
 
     @Test
-    public void addWorkingDay() {
-        WorkingDayDto workingDay = createWorkingDay();
+    public void createTimesheet() {
+        Timesheet timesheet = timesheetController.createTimesheet(TestFixtures.HACKTOBER);
 
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(workingDay);
+        assertNotNull(timesheet);
+    }
 
-        assertThat(addedWorkingDay).isEqualToIgnoringGivenFields(workingDay, "id");
+    @Test
+    public void createWorkingDay() {
+        BreakDto aBreak = createBreak();
+        List<BreakDto> breaks = Collections.singletonList(aBreak);
+        Duration totalWorkDuration = Duration.ofHours(8);
+
+        WorkingDayDto dto = WorkingDayDto.builder()
+                                         .day(HACKTOBER_LAST_DAY_DATE)
+                                         .start(HACKTOBER_LAST_DAY_MIDNIGHT)
+                                         .end(HACKTOBER_LAST_DAY_MIDNIGHT.plus(totalWorkDuration).plus(aBreak.getDuration()))
+                                         .description("Hacktober last day")
+                                         .breaks(breaks)
+                                         .totalWork(totalWorkDuration)
+                                         .totalBreak(aBreak.getDuration())
+                                         .build();
+
+        timesheetController.updateWorkingDay(HACKTOBER_STRING, dto);
+
+        TimesheetDto timesheet = timesheetController.getTimesheet(HACKTOBER_STRING);
+        assertEquals(dto, timesheet.getWorkingDays().get(HACKTOBER_LAST_DAY_DATE.getDayOfMonth() - 1));
+    }
+
+    @Test
+    public void findTimesheet() {
+        timesheetController.createTimesheet(TestFixtures.HACKTOBER);
+
+        TimesheetDto timesheet = timesheetController.getTimesheet(HACKTOBER_STRING);
+
+        assertEquals(TestFixtures.HACKTOBER, timesheet.getYearMonth());
     }
 
     @Test
     public void updateWorkingDay() {
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
-        addedWorkingDay.setStart(TestFixtures.HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(1)));
+        WorkingDayDto workingDay = TestFixtures.createWorkingDay();
+        timesheetController.updateWorkingDay(HACKTOBER_STRING, workingDay);
 
-        workingDayController.updateWorkingDay(addedWorkingDay);
+        WorkingDayDto updatedWorkingDay = TestFixtures.createWorkingDay();
+        Instant newStartTime = HACKTOBER_LAST_DAY_MIDNIGHT.minus(Duration.ofHours(1));
+        updatedWorkingDay.setStart(newStartTime);
 
-        WorkingDayDto persistedWorkingDay = workingDayController.getWorkingDay(addedWorkingDay.getId());
-        assertThat(persistedWorkingDay).isEqualTo(addedWorkingDay);
-    }
+        timesheetController.updateWorkingDay(HACKTOBER_STRING, updatedWorkingDay);
 
-    @Test
-    public void ensureBreaksGetUpdated() {
-        Long workingDayId = workingDayController.addWorkingDay(TestFixtures.createWorkingDayWithBreak()).getId();
-        WorkingDayDto persistedWorkingDay = workingDayController.getWorkingDay(workingDayId);
-        BreakDto persistedBreak = persistedWorkingDay.getBreaks().get(0);
-
-        persistedBreak.setStart(persistedBreak.getStart().minus(30, MINUTES));
-        persistedBreak.setDuration(persistedBreak.getDuration().plusMinutes(30));
-        workingDayController.updateWorkingDay(persistedWorkingDay);
-
-        WorkingDayDto updatedWorkingDay = workingDayController.getWorkingDay(workingDayId);
-
-        assertThat(updatedWorkingDay.getBreaks()).contains(persistedBreak);
-    }
-
-    @Test
-    public void ensureNewBreaksArePersistedDuringUpdate() {
-        WorkingDayDto workingDay = workingDayController.addWorkingDay(createWorkingDay());
-
-        BreakDto aBreak = TestFixtures.createBreak();
-        workingDay.setBreaks(singletonList(aBreak));
-        workingDayController.updateWorkingDay(workingDay);
-
-        assertThat(workingDay.getBreaks().get(0)).isEqualToIgnoringGivenFields(aBreak, "id");
+        WorkingDayDto persistedWorkingDay = timesheetController.getTimesheet(HACKTOBER_STRING).getWorkingDays().get(HACKTOBER_LAST_DAY.getDayOfMonth() - 1);
+        assertThat(persistedWorkingDay).isEqualToIgnoringGivenFields(updatedWorkingDay, "flextime", "totalBreak", "totalWork");
+        assertThat(persistedWorkingDay.getFlextime()).isEqualTo(Duration.of(1, HOURS));
     }
 
     @Test
     public void roundtripForWorkingDay() {
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
+        timesheetController.updateWorkingDay(HACKTOBER_STRING, TestFixtures.createWorkingDay());
 
-        assertThat(timesheetController.getTimesheetForYearMonth(HACKTOBER))
-                .contains(summaryFor(addedWorkingDay));
-    }
-
-    @Test
-    public void roundTripWithDate() {
-        WorkingDayDto addedWorkingDay = workingDayController.addWorkingDay(createWorkingDay());
-
-        assertThat(timesheetController.getTimesheetForMonthByDate(TestFixtures.HACKTOBER_LAST_DAY))
-                .contains(summaryFor(addedWorkingDay));
-    }
-
-    @Test
-    public void containsAllDaysOfMonth() {
-        assertThat(timesheetController.getTimesheetForYearMonth(YearMonth.of(2018, OCTOBER))).hasSize(31);
+        assertThat(timesheetController.getTimesheet(HACKTOBER_STRING).getWorkingDay(HACKTOBER_LAST_DAY))
+                .isEqualTo(TestFixtures.createWorkingDay());
     }
 
     @Test
     public void calculateFlexTime() {
-        workingDayController.addWorkingDay(createLongWorkingDay());
+        timesheetController.updateWorkingDay(HACKTOBER_STRING, createLongWorkingDay());
 
-        List<WorkingDaySummaryDto> timesheet = timesheetController.getTimesheetForYearMonth(HACKTOBER);
-        assertThat(timesheet.get(30).getFlexTime()).isEqualTo(Duration.ofHours(1));
+        TimesheetDto timesheet = timesheetController.getTimesheet(HACKTOBER_STRING);
+        assertThat(timesheet.getWorkingDay(MonthDay.from(HACKTOBER_LAST_DAY)).getFlextime()).isEqualTo(Duration.ofHours(1));
     }
 
-    private WorkingDaySummaryDto summaryFor(WorkingDayDto workingDay) {
-        return WorkingDaySummaryDto.toDto(workingDay.toEntity());
-    }
 }

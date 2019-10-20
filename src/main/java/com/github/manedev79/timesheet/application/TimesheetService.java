@@ -1,48 +1,45 @@
 package com.github.manedev79.timesheet.application;
 
+import com.github.manedev79.timesheet.adapters.secondary.persistence.TimesheetRepository;
 import com.github.manedev79.timesheet.domain.FlexTimeDomainService;
+import com.github.manedev79.timesheet.domain.Timesheet;
+import com.github.manedev79.timesheet.domain.WorkingDay;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import java.time.MonthDay;
+import java.time.YearMonth;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class TimesheetService {
-    private final WorkingDayRepository workingDayRepository;
+    private final TimesheetRepository timesheetRepository;
     private final FlexTimeDomainService flexTimeDomainService;
 
-    public TimesheetService(WorkingDayRepository workingDayRepository, FlexTimeDomainService flexTimeDomainService) {
-        this.workingDayRepository = workingDayRepository;
-        this.flexTimeDomainService = flexTimeDomainService;
+    public TimesheetDto getTimesheetForMonth(YearMonth month) {
+        return TimesheetDto.fromEntity(getTimesheetEntity(month));
     }
 
-    public List<WorkingDaySummaryDto> getWorkingDaysBetween(final LocalDate start, final LocalDate end) {
-        List<WorkingDaySummaryDto> allWorkingDays = getEmptyWorkingDaysBetween(start, end);
-
-        workingDayRepository.findByDayBetween(start, end).stream()
-                .map(WorkingDaySummaryDto::toDto)
-                .forEach(replaceEmptyWorkingDay(allWorkingDays));
-        allWorkingDays.forEach(flexTimeDomainService::flexTimeForeDay);
-
-        return allWorkingDays;
+    private Timesheet getTimesheetEntity(YearMonth month) {
+        return timesheetRepository.findByYearMonth(month).orElse(new Timesheet(month));
     }
 
-    private Consumer<WorkingDaySummaryDto> replaceEmptyWorkingDay(List<WorkingDaySummaryDto> allWorkingDays) {
-        return dto -> allWorkingDays.set(dto.getDay().getDayOfMonth() - 1, dto);
+    public Timesheet createTimesheetForMonth(YearMonth yearMonth) {
+        return timesheetRepository.save(new Timesheet(yearMonth));
     }
 
-    private List<WorkingDaySummaryDto> getEmptyWorkingDaysBetween(LocalDate start, LocalDate end) {
-        List<WorkingDaySummaryDto> allWorkingDays = new ArrayList<>();
-        LocalDate currentDay = start;
+    public void updateWorkingDay(WorkingDayDto workingDay, YearMonth month) {
+        Timesheet timesheet = getTimesheetEntity(month);
+        WorkingDay workingDayEntity = workingDay.toEntity();
+        flexTimeDomainService.flexTimeForDay(workingDayEntity);
 
-        while (currentDay.isBefore(end) || currentDay.isEqual(end)) {
-            allWorkingDays.add(WorkingDaySummaryDto.emptyWorkingDay(currentDay));
-            currentDay = currentDay.plusDays(1);
-        }
-        return allWorkingDays;
+        MonthDay day = MonthDay.from(workingDay.getDay());
+        timesheet.getWorkingDays().put(day, workingDayEntity);
+        timesheetRepository.save(timesheet);
+    }
+
+    public WorkingDayDto getWorkingDay(YearMonth month, MonthDay day) {
+        TimesheetDto timesheet = getTimesheetForMonth(month);
+        return timesheet.getWorkingDay(day);
     }
 }
