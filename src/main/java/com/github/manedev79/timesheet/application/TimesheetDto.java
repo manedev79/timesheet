@@ -7,22 +7,21 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.MonthDay;
 import java.time.YearMonth;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Data
 public class TimesheetDto {
     private final YearMonth yearMonth;
-    private final Map<MonthDay, WorkingDayDto> workingDays;
+    private final List<WorkingDayDto> workingDays;
 
     static TimesheetDto fromEntity(final Timesheet timesheet) {
-        Map<MonthDay, WorkingDayDto> days = new HashMap<>();
-
-        timesheet.getWorkingDays().forEach(
-                (monthDay, workingDay) -> days.put(monthDay, WorkingDayDto.fromEntity(workingDay))
-        );
-
+        List<WorkingDayDto> days = timesheet.getWorkingDays().values()
+                                            .stream()
+                                            .map(WorkingDayDto::fromEntity)
+                                            .collect(Collectors.toList());
         return new TimesheetDto(timesheet.getYearMonth(), days);
     }
 
@@ -30,14 +29,12 @@ public class TimesheetDto {
         Timesheet timesheet = new Timesheet(yearMonth);
         Map<MonthDay, WorkingDay> dayEntities = timesheet.getWorkingDays();
 
-        workingDays.forEach(
-                (monthDay, workingDayDto) -> dayEntities.put(monthDay, workingDayDto.toEntity())
-        );
+        workingDays.forEach(workingDayDto -> dayEntities.put(MonthDay.from(workingDayDto.getDay()), workingDayDto.toEntity()));
 
         return timesheet;
     }
 
     public WorkingDayDto getWorkingDay(MonthDay day) {
-        return workingDays.get(day);
+        return workingDays.get(day.getDayOfMonth() - 1);
     }
 }

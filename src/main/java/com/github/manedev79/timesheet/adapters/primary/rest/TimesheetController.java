@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.MonthDay;
 import java.time.YearMonth;
 
 @RequiredArgsConstructor
@@ -23,14 +24,23 @@ public class TimesheetController {
         return timesheetService.createTimesheetForMonth(yearMonth);
     }
 
-    @PostMapping(path = "{month}/workingDay/{monthDay}")
+    @PostMapping(path = "/{month}/workingday")
     @ResponseStatus(HttpStatus.CREATED)
-    public void updateWorkingDay(WorkingDayDto workingDay) {
-        timesheetService.updateWorkingDay(workingDay);
+    public void updateWorkingDay(@PathVariable("month") String monthString, @RequestBody WorkingDayDto workingDay) {
+        YearMonth month = YearMonth.parse(monthString);
+        timesheetService.updateWorkingDay(workingDay, month);
     }
 
-    @GetMapping(path = "{month}")
-    public TimesheetDto getTimesheet(@RequestParam YearMonth month) {
+    @GetMapping(path = "/{month}")
+    public TimesheetDto getTimesheet(@PathVariable("month") String monthString) {
+        YearMonth month = YearMonth.parse(monthString);
         return timesheetService.getTimesheetForMonth(month);
+    }
+
+    @GetMapping(path = "/{month}/workingDay/{day}")
+    public WorkingDayDto getWorkingDay(@PathVariable("month") String monthString, @PathVariable("day") String dayString) {
+        YearMonth month = YearMonth.parse(monthString);
+        MonthDay day = MonthDay.parse(String.format("--%s", dayString));
+        return timesheetService.getWorkingDay(month, day);
     }
 }

@@ -10,7 +10,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class TestFixtures {
-    public static final YearMonth HACKTOBER = YearMonth.of(2018, 10);
+    public static final String HACKTOBER_STRING = "2018-10";
+    public static final YearMonth HACKTOBER = YearMonth.parse(HACKTOBER_STRING);
     public static final LocalDate HACKTOBER_LAST_DAY_DATE = LocalDate.of(HACKTOBER.getYear(), HACKTOBER.getMonth(), 31);
     public static final MonthDay HACKTOBER_LAST_DAY = MonthDay.from(HACKTOBER_LAST_DAY_DATE);
     public static final Instant HACKTOBER_LAST_DAY_MIDNIGHT = Instant.ofEpochSecond(HACKTOBER_LAST_DAY_DATE.toEpochDay() * 24 * 60 * 60);
@@ -30,12 +31,25 @@ public class TestFixtures {
     }
 
     public static WorkingDayDto createWorkingDay() {
-        Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(8));
-        return new WorkingDayDto(HACKTOBER_LAST_DAY_DATE, HACKTOBER_LAST_DAY_MIDNIGHT, end, FLEX_TIME, "Test day", emptyList());
+        Duration totalWorkDuration = Duration.ofHours(8);
+        Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(totalWorkDuration);
+        return WorkingDayDto.builder()
+                            .day(HACKTOBER_LAST_DAY_DATE)
+                            .start(HACKTOBER_LAST_DAY_MIDNIGHT)
+                            .end(end)
+                            .flextime(FLEX_TIME)
+                            .description("Test day")
+                            .breaks(emptyList())
+                            .totalWork(totalWorkDuration)
+                            .build();
     }
 
     public static WorkingDayDto createLongWorkingDay() {
-        Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(Duration.ofHours(9));
-        return new WorkingDayDto(HACKTOBER_LAST_DAY_DATE, HACKTOBER_LAST_DAY_MIDNIGHT,end , FLEX_TIME, "Test day", emptyList());
+        Duration totalWorkDuration = Duration.ofHours(9);
+        Instant end = HACKTOBER_LAST_DAY_MIDNIGHT.plus(totalWorkDuration);
+        return createWorkingDay().toBuilder()
+                                 .end(end)
+                                 .totalWork(totalWorkDuration)
+                                 .build();
     }
 }

@@ -1,20 +1,20 @@
 package com.github.manedev79.timesheet.application;
 
 import com.github.manedev79.timesheet.domain.WorkingDay;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 public class WorkingDayDto {
 
     private LocalDate day;
@@ -23,11 +23,19 @@ public class WorkingDayDto {
 
     private Instant end;
 
-    private Duration flextime;
+    @Builder.Default
+    private Duration flextime = Duration.ZERO;
 
     private String description;
 
-    private List<BreakDto> breaks;
+    @Builder.Default
+    private List<BreakDto> breaks = new ArrayList<>();
+
+    @Builder.Default
+    private Duration totalBreak = Duration.ZERO;
+
+    @Builder.Default
+    private Duration totalWork = Duration.ZERO;
 
     WorkingDay toEntity() {
         return new WorkingDay(day, start, end, Duration.ZERO, description,
@@ -40,7 +48,13 @@ public class WorkingDayDto {
                 .map(BreakDto::toDto)
                 .collect(toList());
 
-        return new WorkingDayDto(workingDay.getDay(), workingDay.getStart(),
-                workingDay.getEnd(), workingDay.getFlextime(), workingDay.getDescription(), breakDtos);
+        return new WorkingDayDto(workingDay.getDay(),
+                workingDay.getStart(),
+                workingDay.getEnd(),
+                workingDay.getFlextime(),
+                workingDay.getDescription(),
+                breakDtos,
+                workingDay.getTotalBreaksDuration(),
+                workingDay.getTotalWorkDuration());
     }
 }

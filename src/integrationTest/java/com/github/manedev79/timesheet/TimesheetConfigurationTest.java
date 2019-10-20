@@ -18,7 +18,7 @@ public class TimesheetConfigurationTest {
     private TimesheetConfiguration configuration;
 
     @Test
-    public void regurlarWorkingHours() {
+    public void regularWorkingHours() {
         assertThat(configuration.getDailyWorkingHours()).isEqualTo(Duration.ofHours(8));
     }
 }

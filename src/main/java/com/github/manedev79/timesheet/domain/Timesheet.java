@@ -26,7 +26,6 @@ import java.util.stream.IntStream;
 @Getter
 public class Timesheet {
     @Id
-    @Indexed(unique = true)
     private final YearMonth yearMonth;
     private Map<MonthDay, WorkingDay> workingDays = new HashMap<>();
 

@@ -28,14 +28,18 @@ public class TimesheetService {
         return timesheetRepository.save(new Timesheet(yearMonth));
     }
 
-    public void updateWorkingDay(WorkingDayDto workingDay) {
-        YearMonth month = YearMonth.from(workingDay.getDay());
-        MonthDay day = MonthDay.from(workingDay.getDay());
+    public void updateWorkingDay(WorkingDayDto workingDay, YearMonth month) {
         Timesheet timesheet = getTimesheetEntity(month);
-
         WorkingDay workingDayEntity = workingDay.toEntity();
         flexTimeDomainService.flexTimeForDay(workingDayEntity);
+
+        MonthDay day = MonthDay.from(workingDay.getDay());
         timesheet.getWorkingDays().put(day, workingDayEntity);
         timesheetRepository.save(timesheet);
+    }
+
+    public WorkingDayDto getWorkingDay(YearMonth month, MonthDay day) {
+        TimesheetDto timesheet = getTimesheetForMonth(month);
+        return timesheet.getWorkingDay(day);
     }
 }
